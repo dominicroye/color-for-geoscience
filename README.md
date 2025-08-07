@@ -16,7 +16,7 @@ To build an open, well-documented collection of color palettes, each accompanied
 
 ## 🤝 Collaboration
 
-This project is a collaborative initiative with [Joshua Stevens](@jscarto). Contributions from all are welcome!
+This project is a collaborative initiative with [Joshua Stevens](https://github.com/jscarto). Contributions from all are welcome!
 
 ## 📁 Repository Structure
 

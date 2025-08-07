@@ -10,7 +10,7 @@ To build an open, well-documented collection of color palettes, each accompanied
 - **Suggested value range**
 - **Color format** (i.e. `#HEX`)
 - **Color blindness safety** (`blindsafe`)
-- **Recommended usage context** (maps, charts, models, etc.)
+- **Recommended usage context** (extreme values, indices, etc.)
 - **Theme or inspiration** (natural gradients, thermal spectrum, etc.)
 - **Authorship and contributions**
 

@@ -2,9 +2,40 @@
 
 > An open, collaborative collection of color palettes for scientific visualization of geophysical and climatological variables.
 
-[![Palettes](https://img.shields.io/badge/palettes-26-blue)](#palette-index)
-[![Variables](https://img.shields.io/badge/variables-10-green)](#variables)
+[![Palettes](https://img.shields.io/badge/palettes-50-blue)](#palette-index)
+[![Variables](https://img.shields.io/badge/variables-26-green)](#variables)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+
+---
+
+## 📋 Table of Contents
+
+- [Purpose](#-purpose)
+- [Palette Types](#-palette-types)
+- [Metadata Schema](#️-palette-metadata-schema)
+- [Interactive Explorer](#️-interactive-explorer)
+- [Palette Index](#-palette-index)
+  - [🌡️ Temperature](#️-temperature)
+  - [🌡️ Temperature Anomaly](#️-temperature-anomaly)
+  - [🌊 Sea Surface Temperature](#-sea-surface-temperature)
+  - [🌧️ Precipitation](#️-precipitation)
+  - [🏔️ Elevation](#️-elevation)
+  - [💨 Wind](#-wind)
+  - [💧 Humidity & Moisture](#-humidity--moisture)
+  - [🌿 Vegetation](#-vegetation)
+  - [🌫️ Air Quality](#️-air-quality)
+  - [☀️ Radiation](#️-radiation)
+  - [🌋 Seismicity](#-seismicity)
+  - [🌵 Drought](#-drought)
+  - [🛰️ ECMWF — Atmospheric Variables](#️-ecmwf--atmospheric-variables)
+- [Usage](#-usage)
+  - [R](#r)
+  - [Python](#python)
+  - [Google Earth Engine](#google-earth-engine)
+  - [CSS](#css)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Author & Contact](#️-author--contact)
 
 ---
 
@@ -28,6 +59,7 @@ GeoPalettes aims to build an open, well-documented collection of color palettes 
 | **Sequential** | Absolute values with a natural minimum | Precipitation totals, wind speed, AQI |
 | **Diverging** | Anomalies, indices, values with a meaningful center | Temperature anomaly, SPI, NDVI, RH |
 | **Qualitative** | Categorical / land cover classes | Land use, climate zones |
+| **Bivariate** | Two simultaneous variables | Drought severity × frequency |
 
 > **Note on NDVI:** Although NDVI spans −1 to 1, it should be treated as **diverging** when mapping anomalies around a climatological mean, with the neutral point at the mean, not at zero. When mapping raw greenness (0 to 1), a sequential palette is more appropriate.
 
@@ -42,7 +74,7 @@ Each palette JSON file follows this schema:
   "id": "palette-id",
   "name": "Human-readable name",
   "variable": "primary variable",
-  "type": "sequential | diverging | qualitative",
+  "type": "sequential | diverging | qualitative | bivariate",
   "blindsafe": true,
   "range": "min to max with units",
   "center": null,
@@ -62,7 +94,7 @@ The `center` field is `null` for sequential palettes and contains the divergence
 
 ## 🖥️ Interactive Explorer
 
-Open `index.html` locally or visit the [https://dominicroye.github.io/color-for-geoscience/](https://dominicroye.github.io/color-for-geoscience/) to browse, filter, and export all palettes with code snippets for R, Python, and CSS.
+Open `index.html` locally or visit [https://dominicroye.github.io/color-for-geoscience/](https://dominicroye.github.io/color-for-geoscience/) to browse, filter, and export all palettes with code snippets for R, Python, and CSS.
 
 ---
 
@@ -73,10 +105,25 @@ Open `index.html` locally or visit the [https://dominicroye.github.io/color-for-
 | Name | Type | Range | Blindsafe | Author |
 |---|---|---|---|---|
 | ThermClassic | diverging | −30 to 50 °C | ✅ | GeoPalettes |
-| NWS Temperature | sequential | −51 to 66 °C | ⚠️ | dominicroye |
-| SST Pacific | sequential | 0 to 32 °C | ✅ | GeoPalettes |
+| NWS Temperature | sequential | −51 to 66 °C | ⚠️ | Emily Meriam |
 | Desert Heat | sequential | 0 to 60 °C | ⚠️ | GeoPalettes |
 | Arctic Chill | sequential | −50 to 0 °C | ✅ | GeoPalettes |
+| ECMWF Rainbow Purple–Red (25) | sequential | approx −50 to +50 °C | ⚠️ | ECMWF |
+| ECMWF Rainbow Purple–Red (15) | sequential | approx −40 to +40 °C | ⚠️ | ECMWF |
+
+### 🌡️ Temperature Anomaly
+
+| Name | Type | Range | Blindsafe | Author |
+|---|---|---|---|---|
+| ECMWF Blue–White–Red Diverging (9) | diverging | negative to positive anomaly | ⚠️ | ECMWF |
+| ECMWF Blue–White–Red Diverging (20) | diverging | negative to positive anomaly | ⚠️ | ECMWF |
+
+### 🌊 Sea Surface Temperature
+
+| Name | Type | Range | Blindsafe | Author |
+|---|---|---|---|---|
+| SST Pacific | sequential | 0 to 32 °C | ✅ | GeoPalettes |
+| ECMWF Sea Surface Temperature (17) | sequential | −2 to +35 °C | ⚠️ | ECMWF |
 
 ### 🌧️ Precipitation
 
@@ -91,6 +138,8 @@ Open `index.html` locally or visit the [https://dominicroye.github.io/color-for-
 | Meadow & Dusk | sequential | 0 to 300 mm | ⚠️ | dominicroye |
 | Monsoon Burst | sequential | 0 to 500 mm/day | ⚠️ | GeoPalettes |
 | Snowfall | sequential | 0 to 100 cm | ✅ | GeoPalettes |
+| ECMWF Precipitation | sequential | 0 to ~100 mm | ⚠️ | ECMWF |
+| ECMWF Precipitation Blue–Orange (20) | sequential | 0 to ~200 mm/24h | ⚠️ | ECMWF |
 
 ### 🏔️ Elevation
 
@@ -99,6 +148,8 @@ Open `index.html` locally or visit the [https://dominicroye.github.io/color-for-
 | Terrain Natural | sequential | −11000 to 8849 m | ⚠️ | GeoPalettes |
 | Bathymetry | sequential | −11000 to 0 m | ✅ | GeoPalettes |
 | Hypsometric Tint | sequential | 0 to 8849 m | ⚠️ | GeoPalettes |
+| Hypsometric Warm Brown | diverging | −8000 to +4000 m | ⚠️ | — |
+| Hypsometric Classic Green-Yellow | diverging | −8000 to +4000 m | ⚠️ | — |
 
 ### 💨 Wind
 
@@ -106,20 +157,23 @@ Open `index.html` locally or visit the [https://dominicroye.github.io/color-for-
 |---|---|---|---|---|
 | Wind Speed | sequential | 0 to 60 m/s | ✅ | GeoPalettes |
 | Storm Alert | sequential | 0 to 100 kt | ⚠️ | GeoPalettes |
+| ECMWF Wind Speed Rainbow–Grey (30) | sequential | 0 to ~50 m/s | ⚠️ | ECMWF |
 
-### 💧 Humidity & Soil Moisture
+### 💧 Humidity & Moisture
 
 | Name | Type | Range | Blindsafe | Author |
 |---|---|---|---|---|
 | RH Classic | diverging | 0 to 100 % | ✅ | GeoPalettes |
 | Soil Moisture | sequential | 0 to 1 m³/m³ | ✅ | GeoPalettes |
+| ECMWF Green–Blue Humidity (12) | sequential | 0 to 100 % | ⚠️ | ECMWF |
+| ECMWF Soil Moisture (12) | sequential | 0 to 1 vol. fraction | ⚠️ | ECMWF |
 
 ### 🌿 Vegetation
 
 | Name | Type | Range | Blindsafe | Author |
 |---|---|---|---|---|
 | NDVI Green | diverging | −1 to 1 | ⚠️ | GeoPalettes |
-| EVI Tropical | sequential | 0 to 0.8 | ✅ | GeoPalettes |
+| EVI Tropical | sequential | 0 to 0.8 EVI | ✅ | GeoPalettes |
 
 ### 🌫️ Air Quality
 
@@ -139,6 +193,27 @@ Open `index.html` locally or visit the [https://dominicroye.github.io/color-for-
 | Name | Type | Range | Blindsafe | Author |
 |---|---|---|---|---|
 | Seismic Intensity | sequential | I to XII MMI | ⚠️ | GeoPalettes |
+
+### 🌵 Drought
+
+| Name | Type | Range | Blindsafe | Author |
+|---|---|---|---|---|
+| Drought Monitor Bivariate | bivariate | severity × frequency | ⚠️ | John Nelson |
+
+### 🛰️ ECMWF — Atmospheric Variables
+
+| Name | Type | Range | Blindsafe | Author |
+|---|---|---|---|---|
+| ECMWF CAPE (10) | sequential | 0 to ~5000 J/kg | ⚠️ | ECMWF |
+| ECMWF EFI Blue–Red (10) | diverging | −1 to +1 | ⚠️ | ECMWF |
+| ECMWF Geopotential 500 hPa (11) | sequential | 488 to 600 dam | ⚠️ | ECMWF |
+| ECMWF Probability (10) | sequential | 0 to 100 % | ⚠️ | ECMWF |
+| ECMWF Cloud Cover Grey (20) | sequential | 0 to 1 fraction | ✅ | ECMWF |
+| ECMWF Snow/Ice White–Blue (15) | sequential | 0 to ~3 m | ⚠️ | ECMWF |
+| ECMWF Wave Height (10) | sequential | 0 to ~15 m | ⚠️ | ECMWF |
+| ECMWF Aerosol Optical Depth Yellow–Brown (14) | sequential | 0 to ~2 AOD | ⚠️ | ECMWF |
+| ECMWF GEFF Fire Weather Index | sequential | 0 to ~100+ FWI | ⚠️ | ECMWF |
+| ECMWF Visibility Red–White (10) | sequential | 0 to >10 km | ⚠️ | ECMWF |
 
 ---
 
@@ -210,7 +285,7 @@ Map.addLayer(precipImage, {
 Contributions are welcome! To add a new palette:
 
 1. Fork this repository
-2. Add your palette to `palettes.json` following the metadata schema.
+2. Add your palette to `app/palettes.json` following the metadata schema.
 3. Open a pull request describing the variable, context, and design rationale
 
 **Guidelines:**

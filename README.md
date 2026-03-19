@@ -269,18 +269,21 @@ Map.addLayer(precipImage, {
 
 ### QGIS
 
-The repository includes a ready-to-import QGIS style library at [`app/color-for-geoscience.xml`](app/color-for-geoscience.xml).
+Use the bundled QGIS style library at [`app/color-for-geoscience.xml`](app/color-for-geoscience.xml) to import all GeoPalettes ramps into your QGIS style database.
 
-1. Download `color-for-geoscience.xml` from the repository or the published app.
+1. Download [`app/color-for-geoscience.xml`](app/color-for-geoscience.xml) from the repository or from the app download link.
 2. In QGIS, open **Settings > Style Manager...**
-3. Select **Color ramp** in the left panel.
-4. Click **Import/Export** and choose **Import Items...**
-5. Pick the downloaded XML file and import the ramps you want, or import all of them.
-6. Open your layer styling, choose a color ramp, and search for the imported GeoPalettes or ECMWF ramp names.
+3. Choose **Color ramp** in the left panel.
+4. Select **Import/Export > Import Items...**
+5. Open `color-for-geoscience.xml` and import the ramps you want, or import all items.
+6. Open a raster or vector layer's symbology panel.
+7. Choose a renderer such as **Singleband pseudocolor** for rasters or **Graduated** for vectors.
+8. Pick one of the imported ramps by searching for its GeoPalettes or ECMWF name.
 
 Tips:
 - Use the **Interpolated** renderer for continuous raster or graduated vector data.
 - For anomaly maps, choose the diverging ramps and set the midpoint to the physical neutral value.
+- For stepped classes, switch the interpolation to discrete classes after selecting the imported ramp.
 - If you update `app/palettes.json`, keep `app/color-for-geoscience.xml` in sync so QGIS users get the same palette set.
 
 ### CSS

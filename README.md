@@ -62,7 +62,7 @@ The `center` field is `null` for sequential palettes and contains the divergence
 
 ## 🖥️ Interactive Explorer
 
-Open `index.html` locally or visit the [[GitHub Pages site](https://dominicroye.github.io/color-for-geoscience/)](https://dominicroye.github.io/color-for-geoscience/) to browse, filter, and export all palettes with code snippets for R, Python, and CSS.
+Open `index.html` locally or visit the [https://dominicroye.github.io/color-for-geoscience/](https://dominicroye.github.io/color-for-geoscience/) to browse, filter, and export all palettes with code snippets for R, Python, and CSS.
 
 ---
 

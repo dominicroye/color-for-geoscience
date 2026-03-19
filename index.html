@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoPalettes — Color Palettes for Geosciences</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo-block">
+    <h1>Geo<span>Palettes</span></h1>
+    <p>Color palettes for geoscientific visualization</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat">
+      <div class="stat-num" id="stat-palettes">0</div>
+      <div class="stat-label">Palettes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-vars">0</div>
+      <div class="stat-label">Variables</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-safe">0</div>
+      <div class="stat-label">Blindsafe</div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <label>Variable</label>
+  <div class="filter-group" id="var-chips"></div>
+  <div class="sep"></div>
+  <label>Filter</label>
+  <div class="filter-group">
+    <button class="chip" data-filter="blindsafe" onclick="toggleFilter(this)">👁 Blindsafe</button>
+    <button class="chip" data-filter="diverging" onclick="toggleFilter(this)">↔ Diverging</button>
+    <button class="chip" data-filter="sequential" onclick="toggleFilter(this)">→ Sequential</button>
+    <button class="chip" data-filter="qualitative" onclick="toggleFilter(this)">◆ Qualitative</button>
+    <button class="chip" data-filter="bivariate" onclick="toggleFilter(this)">⊞ Bivariate</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search palettes…" oninput="applyFilters()">
+  </div>
+</div>
+
+<div class="grid" id="grid">
+  <div class="empty" id="empty">
+    <div style="font-size:2rem">◌</div>
+    <p>No palettes match the current filters.</p>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <div class="modal-swatch" id="modal-swatch"></div>
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal()">✕ Close</button>
+      <div class="modal-title" id="modal-name"></div>
+      <div class="modal-subtitle" id="modal-sub"></div>
+      <div class="modal-grid" id="modal-meta"></div>
+      <div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Hex Codes <span style="font-size:9px">(click to copy)</span></div>
+      <div class="hex-list" id="modal-hexes"></div>
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="switchTab('r',this)">R</button>
+        <button class="code-tab" onclick="switchTab('python',this)">Python</button>
+        <button class="code-tab" onclick="switchTab('css',this)">CSS</button>
+      </div>
+      <div class="code-block active" id="code-r"></div>
+      <div class="code-block" id="code-python"></div>
+      <div class="code-block" id="code-css"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>GeoPalettes · Open collection of color palettes for geosciences · <a href="https://github.com/dominicroye/color-for-geoscience" target="_blank">github.com/dominicroye/color-for-geoscience</a></p>
+  <p>Contributions welcome · CC BY 4.0</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -290,12 +290,13 @@ ${p.colors.map((c,i)=>`  --${p.id}-${i+1}: <span class="c-str">${c}</span>;`).jo
 }
 
 // Expose functions called via inline onclick to global scope
-window.openModal   = openModal;
-window.closeModal  = closeModal;
-window.copyHex     = copyHex;
-window.copyR       = copyR;
-window.switchTab   = switchTab;
+window.openModal    = openModal;
+window.closeModal   = closeModal;
+window.copyHex      = copyHex;
+window.copyR        = copyR;
+window.switchTab    = switchTab;
 window.toggleFilter = toggleFilter;
-window.setVar      = setVar;
+window.setVar       = setVar;
+window.applyFilters = applyFilters;
 }
 

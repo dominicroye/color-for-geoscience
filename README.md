@@ -62,7 +62,7 @@ The `center` field is `null` for sequential palettes and contains the divergence
 
 ## 🖥️ Interactive Explorer
 
-Open `index.html` locally or visit the [GitHub Pages site](#) to browse, filter, and export all palettes with code snippets for R, Python, and CSS.
+Open `index.html` locally or visit the [[GitHub Pages site](https://dominicroye.github.io/color-for-geoscience/)](https://dominicroye.github.io/color-for-geoscience/) to browse, filter, and export all palettes with code snippets for R, Python, and CSS.
 
 ---
 
@@ -210,9 +210,8 @@ Map.addLayer(precipImage, {
 Contributions are welcome! To add a new palette:
 
 1. Fork this repository
-2. Create a new JSON file in the appropriate variable folder following the metadata schema
-3. Add your palette to `palettes.json`
-4. Open a pull request describing the variable, context, and design rationale
+2. Add your palette to `palettes.json` following the metadata schema.
+3. Open a pull request describing the variable, context, and design rationale
 
 **Guidelines:**
 - Provide at least 5 color stops (7+ recommended)

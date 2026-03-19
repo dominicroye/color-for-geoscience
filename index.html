@@ -608,6 +608,7 @@
     <button class="chip" data-filter="diverging" onclick="toggleFilter(this)">↔ Diverging</button>
     <button class="chip" data-filter="sequential" onclick="toggleFilter(this)">→ Sequential</button>
     <button class="chip" data-filter="qualitative" onclick="toggleFilter(this)">◆ Qualitative</button>
+    <button class="chip" data-filter="bivariate" onclick="toggleFilter(this)">⊞ Bivariate</button>
   </div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
@@ -651,379 +652,19 @@
 </footer>
 
 <script>
-const PALETTES = [
-  // ── TEMPERATURE ──
-  {
-    id: "thermo-classic",
-    name: "ThermClassic",
-    variable: "temperature",
-    type: "diverging",
-    blindsafe: true,
-    range: "-30 to 50 °C",
-    context: "Temperature anomalies, climate maps, departure from normal",
-    also_useful: ["sea surface temp", "anomaly"],
-    theme: "Cool blues diverging through warm oranges",
-    author: "GeoPalettes",
-    colors: ["#053061","#2166ac","#4393c3","#92c5de","#d1e5f0","#f7f7f7","#fddbc7","#f4a582","#d6604d","#b2182b","#67001f"]
-  },
-  {
-    id: "temp-fahrenheit-nws",
-    name: "NWS Temperature",
-    variable: "temperature",
-    type: "sequential",
-    blindsafe: false,
-    range: "-51 to 66 °C",
-    context: "Surface air temperature, weather forecast maps, NWS-style products",
-    also_useful: ["sea surface temp", "heat stress", "urban heat island"],
-    theme: "Near-white polar → steel navy → frigid teal → lime transition → mellow yellows → orange-golds → scorching pink-reds",
-    author: "dominicroye",
-    colors: [
-      "#F8FAFF", // -60 to -45 °F  — barely-there blue/white (extreme cold)
-      "#E8F2FC",
-      "#D4E7F8",
-      "#C0DAF2",
-      "#A8CBEA",
-      "#90BADC", // -45 to 0 °F   — light gray/blues
-      "#7BAACE",
-      "#6899BF",
-      "#5788AE",
-      "#1C2D6B", // 0 to 32 °F    — hard navy dividing wall (freezing)
-      "#1F3878",
-      "#234688",
-      "#3A618C", // 32 to 50 °F   — frigid turquoise/blues
-      "#2D6B80",
-      "#2E7070", // 50 to 70 °F   — transitional lime/teals
-      "#4A7A5A",
-      "#7A8840",
-      "#AAAA30", // 70 to 85 °F   — mellow yellows
-      "#C8A020",
-      "#CC7818", // 85 to 100 °F  — warming orange/golds
-      "#C04830",
-      "#AE2A50", // 100 to 120 °F — scorching pink/reds
-      "#921828",
-      "#760E14",
-      "#5C0A0A"  // 120 to 150 °F — extreme heat maroon
-    ]
-  },
-  {
-    id: "sst-pacific",
-    name: "SST Pacific",
-    variable: "sea surface temp",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 32 °C",
-    context: "Sea surface temperature, ocean heat content",
-    also_useful: ["temperature", "lake surface temp"],
-    theme: "Deep ocean blues to tropical reds",
-    author: "GeoPalettes",
-    colors: ["#001f4d","#0a3d8f","#1565c0","#1e88e5","#29b6f6","#80deea","#a5d6a7","#ffee58","#ff7043","#d32f2f","#7b0000"]
-  },
-  {
-    id: "desert-heat",
-    name: "Desert Heat",
-    variable: "temperature",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to 60 °C",
-    context: "Surface temperature, heat stress, UHI",
-    theme: "Sand to scorched terracotta",
-    author: "GeoPalettes",
-    colors: ["#fdf6ec","#f9e4c0","#f5c97e","#e8a24e","#d07a2a","#b0501a","#8a2f10","#6b1a09","#4a0e04"]
-  },
-  {
-    id: "arctic-chill",
-    name: "Arctic Chill",
-    variable: "temperature",
-    type: "sequential",
-    blindsafe: true,
-    range: "-50 to 0 °C",
-    context: "Polar temperatures, permafrost, sea ice",
-    theme: "Ice white to deep polar blue",
-    author: "GeoPalettes",
-    colors: ["#ffffff","#daeeff","#aed8f5","#74b8ec","#3a93d9","#1a6ab5","#0d4a8a","#053060","#01193a"]
-  },
-  // ── PRECIPITATION ──
-  {
-    id: "rain-blues",
-    name: "Rain Blues",
-    variable: "precipitation",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 300 mm",
-    context: "Monthly/annual precipitation totals",
-    theme: "Dry pale to deep saturated blue",
-    author: "GeoPalettes",
-    colors: ["#f7fbff","#deebf7","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#08519c","#08306b"]
-  },
-  {
-    id: "drought-index",
-    name: "Drought Index",
-    variable: "precipitation",
-    type: "diverging",
-    blindsafe: true,
-    range: "-3 to 3 SPI",
-    context: "SPI, PDSI, drought monitoring; anomaly maps where negative = drought, positive = excess",
-    also_useful: ["precipitation anomaly", "humidity", "streamflow anomaly"],
-    theme: "Wet teal through white to dry brown",
-    author: "GeoPalettes",
-    colors: ["#003c30","#01665e","#35978f","#80cdc1","#c7eae5","#f5f5f5","#f6e8c3","#dfc27d","#bf812d","#8c510a","#543005"]
-  },
-  {
-    id: "monsoon-burst",
-    name: "Monsoon Burst",
-    variable: "precipitation",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to 500 mm/day",
-    context: "Heavy rainfall events, tropical convection",
-    theme: "Pale to vivid teal-green",
-    author: "GeoPalettes",
-    colors: ["#f0fafa","#b2e2e2","#66c2a4","#2ca25f","#006d2c","#00441b"]
-  },
-  {
-    id: "snowfall",
-    name: "Snowfall",
-    variable: "precipitation",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 100 cm",
-    context: "Snowfall depth, snow water equivalent",
-    theme: "Near-white ice to deep indigo",
-    author: "GeoPalettes",
-    colors: ["#f8f9ff","#dce4f5","#b9caeb","#8aaad7","#5b84bc","#3060a0","#1a3e7a","#0b2557","#040f33"]
-  },
-  // ── ELEVATION ──
-  {
-    id: "terrain-natural",
-    name: "Terrain Natural",
-    variable: "elevation",
-    type: "sequential",
-    blindsafe: false,
-    range: "-11000 to 8849 m",
-    context: "DEM, topographic maps, hypsometry",
-    theme: "Ocean deep blue through green plains to white peaks",
-    author: "GeoPalettes",
-    colors: ["#1a237e","#0d47a1","#006064","#1b5e20","#558b2f","#f9a825","#e65100","#bf360c","#6d4c41","#eeeeee","#ffffff"]
-  },
-  {
-    id: "bathymetry",
-    name: "Bathymetry",
-    variable: "elevation",
-    type: "sequential",
-    blindsafe: true,
-    range: "-11000 to 0 m",
-    context: "Ocean depth, seafloor topography",
-    theme: "Dark abyssal black to shallow turquoise",
-    author: "GeoPalettes",
-    colors: ["#020d17","#071a30","#0a2a54","#0d3f7a","#0f5498","#1570b8","#1a8fd1","#3bb5e3","#7dd5f0","#b8eaf9","#e0f7ff"]
-  },
-  {
-    id: "hypsometric",
-    name: "Hypsometric Tint",
-    variable: "elevation",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to 8849 m",
-    context: "Land elevation, atlas cartography",
-    theme: "Classic cartographic green-to-brown-to-white",
-    author: "GeoPalettes",
-    colors: ["#aaddaa","#88cc88","#66bb66","#ddcc77","#cc9955","#aa7744","#885533","#665522","#ffffff"]
-  },
-  {
-    id: "precip-teal-cascade",
-    name: "Teal Cascade",
-    variable: "precipitation",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 200 mm",
-    context: "Monthly precipitation, climatological normals",
-    also_useful: ["runoff", "streamflow", "soil moisture"],
-    theme: "Pale aqua mint to deep ocean teal",
-    author: "dominicroye",
-    colors: ["#d1eeea","#a8dbd9","#85c4c9","#68abb8","#4f90a6","#3b738f","#2a5674"]
-  },
-  {
-    id: "precip-lichen-slate",
-    name: "Lichen & Slate",
-    variable: "precipitation",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 400 mm",
-    context: "Annual precipitation totals, humid climates",
-    also_useful: ["evapotranspiration", "water balance"],
-    theme: "Pale lichen green through steel blue to charcoal grey",
-    author: "dominicroye",
-    colors: ["#F1F7E7","#E1EED6","#CBE2C8","#A3CDC2","#83B4BF","#6898B8","#4F7EB2","#42689F","#37517E","#323232"]
-  },
-  {
-    id: "precip-mist-violet",
-    name: "Mist & Violet",
-    variable: "precipitation",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to 500 mm",
-    context: "Orographic precipitation, fog water input, montane rainfall",
-    also_useful: ["cloud water content", "humidity"],
-    theme: "White fog through icy blue to deep twilight violet",
-    author: "dominicroye",
-    colors: ["#FFFFFF","#F1F5E4","#D4E9CA","#BBE0CE","#B0CCD7","#A9B9D3","#A497CC","#9271A0","#42234D"]
-  },
-  {
-    id: "precip-tropical-burst",
-    name: "Tropical Burst",
-    variable: "precipitation",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to 600 mm",
-    context: "Tropical convective rainfall, ITCZ, monsoon peaks",
-    also_useful: ["extreme rainfall", "flash flood risk"],
-    theme: "Ivory through vivid cyan and cobalt to deep magenta",
-    author: "dominicroye",
-    colors: ["#FEFCF3","#DBEFDA","#B7E0C1","#7CD1BA","#00BFC3","#00A5CA","#2485D0","#4967D4","#6F3BBA","#970094"]
-  },
-  {
-    id: "precip-meadow-dusk",
-    name: "Meadow & Dusk",
-    variable: "precipitation",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to 300 mm",
-    context: "Seasonal rainfall, transitional climate regimes",
-    also_useful: ["vegetation response", "evapotranspiration"],
-    theme: "Pale meadow green through cerulean blue to warm dusk salmon",
-    author: "dominicroye",
-    colors: ["#F3F9EB","#E5F1DB","#B6DFBD","#90CDBD","#6BB8C2","#549FBC","#6284A9","#856A8D","#B9677E","#E98551"]
-  },
-  // ── WIND ──
-  {
-    id: "wind-speed",
-    name: "Wind Speed",
-    variable: "wind",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 60 m/s",
-    context: "Surface wind speed, gust intensity",
-    theme: "Calm pale grey to intense violet",
-    author: "GeoPalettes",
-    colors: ["#f5f5f5","#d9e8f5","#a8cce8","#74aadc","#4685c4","#2f60a8","#1e3f82","#150f5c","#0b0030"]
-  },
-  {
-    id: "storm-alert",
-    name: "Storm Alert",
-    variable: "wind",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to 100 kt",
-    context: "Tropical cyclone intensity, severe weather",
-    theme: "Advisory yellow through orange to extreme purple",
-    author: "GeoPalettes",
-    colors: ["#ffffcc","#ffeda0","#fed976","#feb24c","#fd8d3c","#fc4e2a","#e31a1c","#bd0026","#800026","#4a0066"]
-  },
-  // ── HUMIDITY & MOISTURE ──
-  {
-    id: "relative-humidity",
-    name: "RH Classic",
-    variable: "humidity",
-    type: "diverging",
-    blindsafe: true,
-    range: "0 to 100 %",
-    context: "Relative humidity, drought–wet gradient; diverges from neutral (~50%) toward arid amber and saturated violet",
-    also_useful: ["precipitation anomaly", "soil moisture", "drought index"],
-    theme: "Parched amber to saturated deep purple, diverging through near-white neutral",
-    author: "GeoPalettes",
-    colors: ["#7f3b08","#b35806","#e08214","#fdb863","#fee0b6","#f7f7f7","#d8daeb","#b2abd2","#8073ac","#542788","#2d004b"]
-  },
-  {
-    id: "soil-moisture",
-    name: "Soil Moisture",
-    variable: "humidity",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 1 (volumetric)",
-    context: "Soil water content, field capacity",
-    theme: "Dry sandy beige to waterlogged dark brown",
-    author: "GeoPalettes",
-    colors: ["#f5f0e0","#e8d5a0","#d4b060","#b8853a","#946020","#703a10","#502005","#300e02"]
-  },
-  // ── VEGETATION ──
-  {
-    id: "ndvi-green",
-    name: "NDVI Green",
-    variable: "vegetation",
-    type: "diverging",
-    blindsafe: false,
-    range: "-1 to 1",
-    context: "NDVI, vegetation anomaly, greenness departure from normal; center (~0) represents bare soil/sparse cover",
-    also_useful: ["burned area index", "vegetation anomaly", "land cover change"],
-    theme: "Bare rock/water red through yellow-neutral to dense canopy green",
-    author: "GeoPalettes",
-    colors: ["#a50026","#d73027","#f46d43","#fdae61","#fee08b","#ffffbf","#d9ef8b","#a6d96a","#66bd63","#1a9850","#006837"]
-  },
-  {
-    id: "evi-trop",
-    name: "EVI Tropical",
-    variable: "vegetation",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 0.8 EVI",
-    context: "Enhanced Vegetation Index, tropical forests",
-    theme: "Savanna gold to dense jungle deep green",
-    author: "GeoPalettes",
-    colors: ["#f5f5a0","#d4e06a","#a6c84a","#77ae2a","#508f10","#2e7000","#165000","#053018"]
-  },
-  // ── AIR QUALITY ──
-  {
-    id: "aqi-standard",
-    name: "AQI Standard",
-    variable: "air quality",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to 500 AQI",
-    context: "Air Quality Index (US EPA standard categories)",
-    theme: "Good green through hazardous maroon",
-    author: "GeoPalettes",
-    colors: ["#00e400","#ffff00","#ff7e00","#ff0000","#8f3f97","#7e0023"]
-  },
-  {
-    id: "pm25-exposure",
-    name: "PM2.5 Exposure",
-    variable: "air quality",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 150 μg/m³",
-    context: "Fine particulate matter, air pollution monitoring",
-    theme: "Clean white to smoky deep charcoal",
-    author: "GeoPalettes",
-    colors: ["#f7f7f7","#e0e0e0","#bdbdbd","#969696","#737373","#525252","#252525","#000000"]
-  },
-  // ── RADIATION / SOLAR ──
-  {
-    id: "solar-radiation",
-    name: "Solar Rad",
-    variable: "radiation",
-    type: "sequential",
-    blindsafe: true,
-    range: "0 to 1000 W/m²",
-    context: "Shortwave radiation, insolation, solar energy potential",
-    theme: "Night black through deep blue to solar gold",
-    author: "GeoPalettes",
-    colors: ["#0d0d0d","#1a1a4a","#2a2a8a","#3366cc","#5599dd","#88bbee","#ffdd44","#ffaa00","#ff6600","#cc2200"]
-  },
-  // ── SEISMICITY ──
-  {
-    id: "seismic-intensity",
-    name: "Seismic Intensity",
-    variable: "seismicity",
-    type: "sequential",
-    blindsafe: false,
-    range: "0 to XII MMI",
-    context: "Earthquake intensity, ground shaking hazard",
-    theme: "Undetected white to catastrophic deep red",
-    author: "GeoPalettes",
-    colors: ["#ffffff","#bfefff","#80d0ff","#40aaff","#ffff00","#ffcc00","#ff9900","#ff4400","#cc0000","#880000","#440000"]
-  },
-];
+fetch('palettes.json')
+  .then(r => {
+    if (!r.ok) throw new Error('Could not load palettes.json');
+    return r.json();
+  })
+  .then(data => initApp(data))
+  .catch(err => {
+    document.getElementById('grid').innerHTML =
+      '<div style="padding:60px;color:#f97316;font-family:monospace">⚠ ' + err.message +
+      '<br><small style="color:#6b7280">Run via a local server: python3 -m http.server</small></div>';
+  });
 
+function initApp(PALETTES) {
 // ── RENDER ──
 const variables = [...new Set(PALETTES.map(p => p.variable))];
 const varChips = document.getElementById('var-chips');
@@ -1080,6 +721,7 @@ function applyFilters() {
     if (activeFilters.has('diverging') && p.type !== 'diverging') show = false;
     if (activeFilters.has('sequential') && p.type !== 'sequential') show = false;
     if (activeFilters.has('qualitative') && p.type !== 'qualitative') show = false;
+    if (activeFilters.has('bivariate') && p.type !== 'bivariate') show = false;
     if (searchQuery && !p.name.toLowerCase().includes(searchQuery) &&
         !p.variable.toLowerCase().includes(searchQuery) &&
         !p.theme.toLowerCase().includes(searchQuery) &&
@@ -1190,6 +832,9 @@ function openModal(id, e) {
         <span style="background:#F8FAFF;color:#333;border:1px solid #ccc;padding:2px 8px;font-size:10px;border-radius:1px">&lt; −43 °C · Polar white</span>
       </div>
     </div>` : ''}
+    ${p.notes ? `<div class="meta-box" style="grid-column:1/-1"><div class="meta-box-label">Notes</div><div class="meta-box-value" style="font-size:11px;line-height:1.5;color:var(--text-mid)">${p.notes}</div></div>` : ''}
+    ${p.source ? `<div class="meta-box"><div class="meta-box-label">Source</div><div class="meta-box-value" style="font-size:11px">${p.source}</div></div>` : ''}
+    ${p.license && p.license !== 'CC BY 4.0' ? `<div class="meta-box"><div class="meta-box-label">License</div><div class="meta-box-value" style="font-size:11px">${p.license}</div></div>` : ''}
   `;
 
   document.getElementById('modal-hexes').innerHTML =
@@ -1297,6 +942,8 @@ ${stops}
 ${p.colors.map((c,i)=>`  --${p.id}-${i+1}: <span class="c-str">${c}</span>;`).join('\n')}
 }`;
 }
+}
+
 </script>
 </body>
 </html>

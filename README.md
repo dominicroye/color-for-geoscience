@@ -32,6 +32,7 @@
   - [R](#r)
   - [Python](#python)
   - [Google Earth Engine](#google-earth-engine)
+  - [QGIS](#qgis)
   - [CSS](#css)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -266,6 +267,22 @@ Map.addLayer(precipImage, {
 }, 'Monthly Precipitation');
 ```
 
+### QGIS
+
+The repository includes a ready-to-import QGIS style library at [`app/color-for-geoscience.xml`](app/color-for-geoscience.xml).
+
+1. Download `color-for-geoscience.xml` from the repository or the published app.
+2. In QGIS, open **Settings > Style Manager...**
+3. Select **Color ramp** in the left panel.
+4. Click **Import/Export** and choose **Import Items...**
+5. Pick the downloaded XML file and import the ramps you want, or import all of them.
+6. Open your layer styling, choose a color ramp, and search for the imported GeoPalettes or ECMWF ramp names.
+
+Tips:
+- Use the **Interpolated** renderer for continuous raster or graduated vector data.
+- For anomaly maps, choose the diverging ramps and set the midpoint to the physical neutral value.
+- If you update `app/palettes.json`, keep `app/color-for-geoscience.xml` in sync so QGIS users get the same palette set.
+
 ### CSS
 
 ```css
@@ -286,7 +303,8 @@ Contributions are welcome! To add a new palette:
 
 1. Fork this repository
 2. Add your palette to `app/palettes.json` following the metadata schema.
-3. Open a pull request describing the variable, context, and design rationale
+3. If you are contributing QGIS support, update `app/color-for-geoscience.xml` so the style library matches the JSON catalog.
+4. Open a pull request describing the variable, context, and design rationale
 
 **Guidelines:**
 - Provide at least 5 color stops (7+ recommended)

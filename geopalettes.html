@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoPalettes — Color Palettes for Geosciences</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111318;
+    --surface2: #191d24;
+    --border: #252a34;
+    --text: #e8eaf0;
+    --text-dim: #6b7280;
+    --text-mid: #9ca3af;
+    --accent: #f0f4ff;
+    --mono: 'Space Mono', monospace;
+    --serif: 'Fraunces', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .logo-block h1 {
+    font-family: var(--serif);
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .logo-block h1 span {
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .logo-block p {
+    margin-top: 6px;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 28px;
+    align-items: flex-end;
+  }
+
+  .stat {
+    text-align: right;
+  }
+
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    padding: 18px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .controls label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-right: 4px;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .chip {
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--text-mid);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .chip:hover { border-color: var(--text-mid); color: var(--text); }
+
+  .chip.active {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+  }
+
+  .sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+
+  .search-wrap {
+    position: relative;
+    margin-left: auto;
+  }
+
+  .search-wrap input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 6px 12px 6px 32px;
+    border-radius: 2px;
+    width: 180px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-wrap input:focus { border-color: var(--text-mid); }
+  .search-wrap input::placeholder { color: var(--text-dim); }
+
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    pointer-events: none;
+    font-size: 12px;
+  }
+
+  /* ── GRID ── */
+  .grid {
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+    overflow: hidden;
+    position: relative;
+    animation: fadeIn 0.3s ease both;
+  }
+
+  .card:hover {
+    border-color: #3a3f4a;
+    z-index: 2;
+  }
+
+  .card.hidden { display: none; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-swatch {
+    height: 56px;
+    display: flex;
+    width: 100%;
+  }
+
+  .swatch-segment {
+    flex: 1;
+    height: 100%;
+    transition: flex 0.2s;
+  }
+
+  .card:hover .swatch-segment { flex: 1.4; }
+
+  .card-body {
+    padding: 14px 16px 12px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  .card-name {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+
+  .card-variable {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-dim);
+    background: var(--surface2);
+    padding: 3px 7px;
+    border-radius: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .meta-item {
+    font-size: 10px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .meta-item .icon { font-size: 11px; }
+
+  .badge-safe {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 1px;
+    background: #0e2a1a;
+    color: #4ade80;
+    border: 1px solid #1a4a2a;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .badge-unsafe {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 1px;
+    background: #2a1a0e;
+    color: #f97316;
+    border: 1px solid #4a2a1a;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .card-desc {
+    font-size: 10.5px;
+    color: var(--text-mid);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .card-also {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  .also-tag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 2px 6px;
+    border-radius: 1px;
+    font-size: 9px;
+  }
+
+  .card-footer-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .card-author {
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .btn-action {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.15s;
+  }
+
+  .btn-action:hover { border-color: var(--text-mid); color: var(--text); }
+
+  .btn-action.copied { border-color: #4ade80; color: #4ade80; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    max-width: 680px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalIn 0.2s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .modal-swatch {
+    height: 80px;
+    display: flex;
+    width: 100%;
+  }
+
+  .modal-swatch .swatch-segment {
+    position: relative;
+    cursor: pointer;
+    height: 100%;
+  }
+
+  .modal-swatch .swatch-segment:hover::after {
+    content: attr(data-hex);
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 2px 5px;
+    border-radius: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .modal-body { padding: 24px; }
+
+  .modal-title {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .modal-subtitle {
+    color: var(--text-dim);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 20px;
+  }
+
+  .modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .meta-box {
+    background: var(--surface2);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+  }
+
+  .meta-box-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .meta-box-value {
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .hex-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .hex-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    border-radius: 1px;
+    transition: border-color 0.15s;
+    font-size: 11px;
+    color: var(--text-mid);
+  }
+
+  .hex-chip:hover { border-color: var(--text-mid); }
+
+  .hex-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .code-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .code-tab {
+    padding: 6px 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.12s;
+    border-bottom: none;
+  }
+
+  .code-tab.active { background: var(--bg); color: var(--text); }
+
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 16px;
+    font-size: 11px;
+    line-height: 1.8;
+    color: #a5b4fc;
+    white-space: pre;
+    overflow-x: auto;
+    display: none;
+  }
+
+  .code-block.active { display: block; }
+
+  .code-block .c-comment { color: var(--text-dim); }
+  .code-block .c-fn     { color: #f472b6; }
+  .code-block .c-str    { color: #86efac; }
+  .code-block .c-num    { color: #fbbf24; }
+
+  .modal-close {
+    float: right;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.12s;
+    margin-bottom: 16px;
+  }
+
+  .modal-close:hover { border-color: var(--text-mid); color: var(--text); }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-dim);
+    grid-column: 1/-1;
+    display: none;
+  }
+
+  .empty.show { display: block; }
+
+  .empty p { font-size: 11px; margin-top: 8px; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  footer p { font-size: 10px; color: var(--text-dim); }
+
+  footer a { color: var(--text-mid); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-block">
+    <h1>Geo<span>Palettes</span></h1>
+    <p>Color palettes for geoscientific visualization</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat">
+      <div class="stat-num" id="stat-palettes">0</div>
+      <div class="stat-label">Palettes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-vars">0</div>
+      <div class="stat-label">Variables</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-safe">0</div>
+      <div class="stat-label">Blindsafe</div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <label>Variable</label>
+  <div class="filter-group" id="var-chips"></div>
+  <div class="sep"></div>
+  <label>Filter</label>
+  <div class="filter-group">
+    <button class="chip" data-filter="blindsafe" onclick="toggleFilter(this)">👁 Blindsafe</button>
+    <button class="chip" data-filter="diverging" onclick="toggleFilter(this)">↔ Diverging</button>
+    <button class="chip" data-filter="sequential" onclick="toggleFilter(this)">→ Sequential</button>
+    <button class="chip" data-filter="qualitative" onclick="toggleFilter(this)">◆ Qualitative</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search palettes…" oninput="applyFilters()">
+  </div>
+</div>
+
+<div class="grid" id="grid">
+  <div class="empty" id="empty">
+    <div style="font-size:2rem">◌</div>
+    <p>No palettes match the current filters.</p>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <div class="modal-swatch" id="modal-swatch"></div>
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal()">✕ Close</button>
+      <div class="modal-title" id="modal-name"></div>
+      <div class="modal-subtitle" id="modal-sub"></div>
+      <div class="modal-grid" id="modal-meta"></div>
+      <div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Hex Codes <span style="font-size:9px">(click to copy)</span></div>
+      <div class="hex-list" id="modal-hexes"></div>
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="switchTab('r',this)">R</button>
+        <button class="code-tab" onclick="switchTab('python',this)">Python</button>
+        <button class="code-tab" onclick="switchTab('css',this)">CSS</button>
+      </div>
+      <div class="code-block active" id="code-r"></div>
+      <div class="code-block" id="code-python"></div>
+      <div class="code-block" id="code-css"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>GeoPalettes · Open collection of color palettes for geosciences · <a href="https://github.com/dominicroye/color-for-geoscience" target="_blank">github.com/dominicroye/color-for-geoscience</a></p>
+  <p>Contributions welcome · CC BY 4.0</p>
+</footer>
+
+<script>
+const PALETTES = [
+  // ── TEMPERATURE ──
+  {
+    id: "thermo-classic",
+    name: "ThermClassic",
+    variable: "temperature",
+    type: "diverging",
+    blindsafe: true,
+    range: "-30 to 50 °C",
+    context: "Temperature anomalies, climate maps, departure from normal",
+    also_useful: ["sea surface temp", "anomaly"],
+    theme: "Cool blues diverging through warm oranges",
+    author: "GeoPalettes",
+    colors: ["#053061","#2166ac","#4393c3","#92c5de","#d1e5f0","#f7f7f7","#fddbc7","#f4a582","#d6604d","#b2182b","#67001f"]
+  },
+  {
+    id: "temp-fahrenheit-nws",
+    name: "NWS Temperature",
+    variable: "temperature",
+    type: "sequential",
+    blindsafe: false,
+    range: "-51 to 66 °C",
+    context: "Surface air temperature, weather forecast maps, NWS-style products",
+    also_useful: ["sea surface temp", "heat stress", "urban heat island"],
+    theme: "Near-white polar → steel navy → frigid teal → lime transition → mellow yellows → orange-golds → scorching pink-reds",
+    author: "dominicroye",
+    colors: [
+      "#F8FAFF", // -60 to -45 °F  — barely-there blue/white (extreme cold)
+      "#E8F2FC",
+      "#D4E7F8",
+      "#C0DAF2",
+      "#A8CBEA",
+      "#90BADC", // -45 to 0 °F   — light gray/blues
+      "#7BAACE",
+      "#6899BF",
+      "#5788AE",
+      "#1C2D6B", // 0 to 32 °F    — hard navy dividing wall (freezing)
+      "#1F3878",
+      "#234688",
+      "#3A618C", // 32 to 50 °F   — frigid turquoise/blues
+      "#2D6B80",
+      "#2E7070", // 50 to 70 °F   — transitional lime/teals
+      "#4A7A5A",
+      "#7A8840",
+      "#AAAA30", // 70 to 85 °F   — mellow yellows
+      "#C8A020",
+      "#CC7818", // 85 to 100 °F  — warming orange/golds
+      "#C04830",
+      "#AE2A50", // 100 to 120 °F — scorching pink/reds
+      "#921828",
+      "#760E14",
+      "#5C0A0A"  // 120 to 150 °F — extreme heat maroon
+    ]
+  },
+  {
+    id: "sst-pacific",
+    name: "SST Pacific",
+    variable: "sea surface temp",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 32 °C",
+    context: "Sea surface temperature, ocean heat content",
+    also_useful: ["temperature", "lake surface temp"],
+    theme: "Deep ocean blues to tropical reds",
+    author: "GeoPalettes",
+    colors: ["#001f4d","#0a3d8f","#1565c0","#1e88e5","#29b6f6","#80deea","#a5d6a7","#ffee58","#ff7043","#d32f2f","#7b0000"]
+  },
+  {
+    id: "desert-heat",
+    name: "Desert Heat",
+    variable: "temperature",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to 60 °C",
+    context: "Surface temperature, heat stress, UHI",
+    theme: "Sand to scorched terracotta",
+    author: "GeoPalettes",
+    colors: ["#fdf6ec","#f9e4c0","#f5c97e","#e8a24e","#d07a2a","#b0501a","#8a2f10","#6b1a09","#4a0e04"]
+  },
+  {
+    id: "arctic-chill",
+    name: "Arctic Chill",
+    variable: "temperature",
+    type: "sequential",
+    blindsafe: true,
+    range: "-50 to 0 °C",
+    context: "Polar temperatures, permafrost, sea ice",
+    theme: "Ice white to deep polar blue",
+    author: "GeoPalettes",
+    colors: ["#ffffff","#daeeff","#aed8f5","#74b8ec","#3a93d9","#1a6ab5","#0d4a8a","#053060","#01193a"]
+  },
+  // ── PRECIPITATION ──
+  {
+    id: "rain-blues",
+    name: "Rain Blues",
+    variable: "precipitation",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 300 mm",
+    context: "Monthly/annual precipitation totals",
+    theme: "Dry pale to deep saturated blue",
+    author: "GeoPalettes",
+    colors: ["#f7fbff","#deebf7","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#08519c","#08306b"]
+  },
+  {
+    id: "drought-index",
+    name: "Drought Index",
+    variable: "precipitation",
+    type: "diverging",
+    blindsafe: true,
+    range: "-3 to 3 SPI",
+    context: "SPI, PDSI, drought monitoring; anomaly maps where negative = drought, positive = excess",
+    also_useful: ["precipitation anomaly", "humidity", "streamflow anomaly"],
+    theme: "Wet teal through white to dry brown",
+    author: "GeoPalettes",
+    colors: ["#003c30","#01665e","#35978f","#80cdc1","#c7eae5","#f5f5f5","#f6e8c3","#dfc27d","#bf812d","#8c510a","#543005"]
+  },
+  {
+    id: "monsoon-burst",
+    name: "Monsoon Burst",
+    variable: "precipitation",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to 500 mm/day",
+    context: "Heavy rainfall events, tropical convection",
+    theme: "Pale to vivid teal-green",
+    author: "GeoPalettes",
+    colors: ["#f0fafa","#b2e2e2","#66c2a4","#2ca25f","#006d2c","#00441b"]
+  },
+  {
+    id: "snowfall",
+    name: "Snowfall",
+    variable: "precipitation",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 100 cm",
+    context: "Snowfall depth, snow water equivalent",
+    theme: "Near-white ice to deep indigo",
+    author: "GeoPalettes",
+    colors: ["#f8f9ff","#dce4f5","#b9caeb","#8aaad7","#5b84bc","#3060a0","#1a3e7a","#0b2557","#040f33"]
+  },
+  // ── ELEVATION ──
+  {
+    id: "terrain-natural",
+    name: "Terrain Natural",
+    variable: "elevation",
+    type: "sequential",
+    blindsafe: false,
+    range: "-11000 to 8849 m",
+    context: "DEM, topographic maps, hypsometry",
+    theme: "Ocean deep blue through green plains to white peaks",
+    author: "GeoPalettes",
+    colors: ["#1a237e","#0d47a1","#006064","#1b5e20","#558b2f","#f9a825","#e65100","#bf360c","#6d4c41","#eeeeee","#ffffff"]
+  },
+  {
+    id: "bathymetry",
+    name: "Bathymetry",
+    variable: "elevation",
+    type: "sequential",
+    blindsafe: true,
+    range: "-11000 to 0 m",
+    context: "Ocean depth, seafloor topography",
+    theme: "Dark abyssal black to shallow turquoise",
+    author: "GeoPalettes",
+    colors: ["#020d17","#071a30","#0a2a54","#0d3f7a","#0f5498","#1570b8","#1a8fd1","#3bb5e3","#7dd5f0","#b8eaf9","#e0f7ff"]
+  },
+  {
+    id: "hypsometric",
+    name: "Hypsometric Tint",
+    variable: "elevation",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to 8849 m",
+    context: "Land elevation, atlas cartography",
+    theme: "Classic cartographic green-to-brown-to-white",
+    author: "GeoPalettes",
+    colors: ["#aaddaa","#88cc88","#66bb66","#ddcc77","#cc9955","#aa7744","#885533","#665522","#ffffff"]
+  },
+  {
+    id: "precip-teal-cascade",
+    name: "Teal Cascade",
+    variable: "precipitation",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 200 mm",
+    context: "Monthly precipitation, climatological normals",
+    also_useful: ["runoff", "streamflow", "soil moisture"],
+    theme: "Pale aqua mint to deep ocean teal",
+    author: "dominicroye",
+    colors: ["#d1eeea","#a8dbd9","#85c4c9","#68abb8","#4f90a6","#3b738f","#2a5674"]
+  },
+  {
+    id: "precip-lichen-slate",
+    name: "Lichen & Slate",
+    variable: "precipitation",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 400 mm",
+    context: "Annual precipitation totals, humid climates",
+    also_useful: ["evapotranspiration", "water balance"],
+    theme: "Pale lichen green through steel blue to charcoal grey",
+    author: "dominicroye",
+    colors: ["#F1F7E7","#E1EED6","#CBE2C8","#A3CDC2","#83B4BF","#6898B8","#4F7EB2","#42689F","#37517E","#323232"]
+  },
+  {
+    id: "precip-mist-violet",
+    name: "Mist & Violet",
+    variable: "precipitation",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to 500 mm",
+    context: "Orographic precipitation, fog water input, montane rainfall",
+    also_useful: ["cloud water content", "humidity"],
+    theme: "White fog through icy blue to deep twilight violet",
+    author: "dominicroye",
+    colors: ["#FFFFFF","#F1F5E4","#D4E9CA","#BBE0CE","#B0CCD7","#A9B9D3","#A497CC","#9271A0","#42234D"]
+  },
+  {
+    id: "precip-tropical-burst",
+    name: "Tropical Burst",
+    variable: "precipitation",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to 600 mm",
+    context: "Tropical convective rainfall, ITCZ, monsoon peaks",
+    also_useful: ["extreme rainfall", "flash flood risk"],
+    theme: "Ivory through vivid cyan and cobalt to deep magenta",
+    author: "dominicroye",
+    colors: ["#FEFCF3","#DBEFDA","#B7E0C1","#7CD1BA","#00BFC3","#00A5CA","#2485D0","#4967D4","#6F3BBA","#970094"]
+  },
+  {
+    id: "precip-meadow-dusk",
+    name: "Meadow & Dusk",
+    variable: "precipitation",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to 300 mm",
+    context: "Seasonal rainfall, transitional climate regimes",
+    also_useful: ["vegetation response", "evapotranspiration"],
+    theme: "Pale meadow green through cerulean blue to warm dusk salmon",
+    author: "dominicroye",
+    colors: ["#F3F9EB","#E5F1DB","#B6DFBD","#90CDBD","#6BB8C2","#549FBC","#6284A9","#856A8D","#B9677E","#E98551"]
+  },
+  // ── WIND ──
+  {
+    id: "wind-speed",
+    name: "Wind Speed",
+    variable: "wind",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 60 m/s",
+    context: "Surface wind speed, gust intensity",
+    theme: "Calm pale grey to intense violet",
+    author: "GeoPalettes",
+    colors: ["#f5f5f5","#d9e8f5","#a8cce8","#74aadc","#4685c4","#2f60a8","#1e3f82","#150f5c","#0b0030"]
+  },
+  {
+    id: "storm-alert",
+    name: "Storm Alert",
+    variable: "wind",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to 100 kt",
+    context: "Tropical cyclone intensity, severe weather",
+    theme: "Advisory yellow through orange to extreme purple",
+    author: "GeoPalettes",
+    colors: ["#ffffcc","#ffeda0","#fed976","#feb24c","#fd8d3c","#fc4e2a","#e31a1c","#bd0026","#800026","#4a0066"]
+  },
+  // ── HUMIDITY & MOISTURE ──
+  {
+    id: "relative-humidity",
+    name: "RH Classic",
+    variable: "humidity",
+    type: "diverging",
+    blindsafe: true,
+    range: "0 to 100 %",
+    context: "Relative humidity, drought–wet gradient; diverges from neutral (~50%) toward arid amber and saturated violet",
+    also_useful: ["precipitation anomaly", "soil moisture", "drought index"],
+    theme: "Parched amber to saturated deep purple, diverging through near-white neutral",
+    author: "GeoPalettes",
+    colors: ["#7f3b08","#b35806","#e08214","#fdb863","#fee0b6","#f7f7f7","#d8daeb","#b2abd2","#8073ac","#542788","#2d004b"]
+  },
+  {
+    id: "soil-moisture",
+    name: "Soil Moisture",
+    variable: "humidity",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 1 (volumetric)",
+    context: "Soil water content, field capacity",
+    theme: "Dry sandy beige to waterlogged dark brown",
+    author: "GeoPalettes",
+    colors: ["#f5f0e0","#e8d5a0","#d4b060","#b8853a","#946020","#703a10","#502005","#300e02"]
+  },
+  // ── VEGETATION ──
+  {
+    id: "ndvi-green",
+    name: "NDVI Green",
+    variable: "vegetation",
+    type: "diverging",
+    blindsafe: false,
+    range: "-1 to 1",
+    context: "NDVI, vegetation anomaly, greenness departure from normal; center (~0) represents bare soil/sparse cover",
+    also_useful: ["burned area index", "vegetation anomaly", "land cover change"],
+    theme: "Bare rock/water red through yellow-neutral to dense canopy green",
+    author: "GeoPalettes",
+    colors: ["#a50026","#d73027","#f46d43","#fdae61","#fee08b","#ffffbf","#d9ef8b","#a6d96a","#66bd63","#1a9850","#006837"]
+  },
+  {
+    id: "evi-trop",
+    name: "EVI Tropical",
+    variable: "vegetation",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 0.8 EVI",
+    context: "Enhanced Vegetation Index, tropical forests",
+    theme: "Savanna gold to dense jungle deep green",
+    author: "GeoPalettes",
+    colors: ["#f5f5a0","#d4e06a","#a6c84a","#77ae2a","#508f10","#2e7000","#165000","#053018"]
+  },
+  // ── AIR QUALITY ──
+  {
+    id: "aqi-standard",
+    name: "AQI Standard",
+    variable: "air quality",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to 500 AQI",
+    context: "Air Quality Index (US EPA standard categories)",
+    theme: "Good green through hazardous maroon",
+    author: "GeoPalettes",
+    colors: ["#00e400","#ffff00","#ff7e00","#ff0000","#8f3f97","#7e0023"]
+  },
+  {
+    id: "pm25-exposure",
+    name: "PM2.5 Exposure",
+    variable: "air quality",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 150 μg/m³",
+    context: "Fine particulate matter, air pollution monitoring",
+    theme: "Clean white to smoky deep charcoal",
+    author: "GeoPalettes",
+    colors: ["#f7f7f7","#e0e0e0","#bdbdbd","#969696","#737373","#525252","#252525","#000000"]
+  },
+  // ── RADIATION / SOLAR ──
+  {
+    id: "solar-radiation",
+    name: "Solar Rad",
+    variable: "radiation",
+    type: "sequential",
+    blindsafe: true,
+    range: "0 to 1000 W/m²",
+    context: "Shortwave radiation, insolation, solar energy potential",
+    theme: "Night black through deep blue to solar gold",
+    author: "GeoPalettes",
+    colors: ["#0d0d0d","#1a1a4a","#2a2a8a","#3366cc","#5599dd","#88bbee","#ffdd44","#ffaa00","#ff6600","#cc2200"]
+  },
+  // ── SEISMICITY ──
+  {
+    id: "seismic-intensity",
+    name: "Seismic Intensity",
+    variable: "seismicity",
+    type: "sequential",
+    blindsafe: false,
+    range: "0 to XII MMI",
+    context: "Earthquake intensity, ground shaking hazard",
+    theme: "Undetected white to catastrophic deep red",
+    author: "GeoPalettes",
+    colors: ["#ffffff","#bfefff","#80d0ff","#40aaff","#ffff00","#ffcc00","#ff9900","#ff4400","#cc0000","#880000","#440000"]
+  },
+];
+
+// ── RENDER ──
+const variables = [...new Set(PALETTES.map(p => p.variable))];
+const varChips = document.getElementById('var-chips');
+
+let activeVar = 'all';
+let activeFilters = new Set();
+let searchQuery = '';
+let currentPalette = null;
+let activeCodeTab = 'r';
+
+// Stat counts — auto-computed from PALETTES array
+document.getElementById('stat-palettes').textContent = PALETTES.length;
+document.getElementById('stat-vars').textContent = variables.length;
+document.getElementById('stat-safe').textContent = PALETTES.filter(p => p.blindsafe).length;
+
+// Variable chips
+const allChip = document.createElement('button');
+allChip.className = 'chip active';
+allChip.textContent = '★ All';
+allChip.onclick = () => setVar('all', allChip);
+varChips.appendChild(allChip);
+
+variables.forEach(v => {
+  const btn = document.createElement('button');
+  btn.className = 'chip';
+  btn.textContent = v;
+  btn.onclick = () => setVar(v, btn);
+  varChips.appendChild(btn);
+});
+
+function setVar(v, el) {
+  activeVar = v;
+  document.querySelectorAll('#var-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function toggleFilter(el) {
+  const f = el.dataset.filter;
+  if (activeFilters.has(f)) { activeFilters.delete(f); el.classList.remove('active'); }
+  else { activeFilters.add(f); el.classList.add('active'); }
+  applyFilters();
+}
+
+function applyFilters() {
+  searchQuery = document.getElementById('search').value.toLowerCase();
+  let visible = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const id = card.dataset.id;
+    const p = PALETTES.find(x => x.id === id);
+    let show = true;
+    if (activeVar !== 'all' && p.variable !== activeVar) show = false;
+    if (activeFilters.has('blindsafe') && !p.blindsafe) show = false;
+    if (activeFilters.has('diverging') && p.type !== 'diverging') show = false;
+    if (activeFilters.has('sequential') && p.type !== 'sequential') show = false;
+    if (activeFilters.has('qualitative') && p.type !== 'qualitative') show = false;
+    if (searchQuery && !p.name.toLowerCase().includes(searchQuery) &&
+        !p.variable.toLowerCase().includes(searchQuery) &&
+        !p.theme.toLowerCase().includes(searchQuery) &&
+        !p.context.toLowerCase().includes(searchQuery) &&
+        !(p.also_useful || []).some(t => t.toLowerCase().includes(searchQuery))) show = false;
+    card.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  document.getElementById('empty').classList.toggle('show', visible === 0);
+}
+
+// Build cards
+const grid = document.getElementById('grid');
+
+PALETTES.forEach((p, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = p.id;
+  card.style.animationDelay = (i * 0.03) + 's';
+
+  const swatch = p.colors.map(c =>
+    `<div class="swatch-segment" style="background:${c}" title="${c}"></div>`
+  ).join('');
+
+  card.innerHTML = `
+    <div class="card-swatch">${swatch}</div>
+    <div class="card-body">
+      <div class="card-header">
+        <div class="card-name">${p.name}</div>
+        <div class="card-variable">${p.variable}</div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item"><span class="icon">◈</span> ${p.type}</span>
+        <span class="meta-item"><span class="icon">⬡</span> ${p.colors.length} stops</span>
+        <span class="${p.blindsafe ? 'badge-safe' : 'badge-unsafe'}">${p.blindsafe ? '👁 blindsafe' : '⚠ not tested'}</span>
+      </div>
+      <div class="card-desc">${p.theme}</div>
+      ${p.also_useful && p.also_useful.length ? `<div class="card-also">Also: ${p.also_useful.map(t=>`<span class="also-tag">${t}</span>`).join('')}</div>` : ''}
+      <div class="card-footer-meta">
+        ${p.author && p.author !== 'GeoPalettes' ? `<span class="card-author">◎ ${p.author}</span>` : '<span></span>'}
+        <div class="card-actions">
+          <button class="btn-action" onclick="openModal('${p.id}',event)">↗ Details</button>
+          <button class="btn-action" onclick="copyHex('${p.id}',this,event)">⊕ Copy HEX</button>
+          <button class="btn-action" onclick="copyR('${p.id}',this,event)">⊕ Copy R</button>
+        </div>
+      </div>
+    </div>
+  `;
+  grid.insertBefore(card, document.getElementById('empty'));
+});
+
+// ── COPY ──
+function copyHex(id, btn, e) {
+  e && e.stopPropagation();
+  const p = PALETTES.find(x => x.id === id);
+  navigator.clipboard.writeText(p.colors.join(', ')).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⊕ Copy HEX'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function copyR(id, btn, e) {
+  e && e.stopPropagation();
+  const p = PALETTES.find(x => x.id === id);
+  const code = buildR(p);
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⊕ Copy R'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+// ── MODAL ──
+function openModal(id, e) {
+  e && e.stopPropagation();
+  const p = PALETTES.find(x => x.id === id);
+  currentPalette = p;
+
+  document.getElementById('modal-swatch').innerHTML =
+    p.colors.map(c =>
+      `<div class="swatch-segment" data-hex="${c}" style="background:${c}" onclick="navigator.clipboard.writeText('${c}')" title="Click to copy ${c}"></div>`
+    ).join('');
+
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-sub').textContent = `${p.variable} · ${p.type} · ${p.colors.length} color stops`;
+
+  document.getElementById('modal-meta').innerHTML = `
+    <div class="meta-box"><div class="meta-box-label">Variable</div><div class="meta-box-value">${p.variable}</div></div>
+    <div class="meta-box"><div class="meta-box-label">Type</div><div class="meta-box-value">${p.type}</div></div>
+    <div class="meta-box"><div class="meta-box-label">Value Range</div><div class="meta-box-value">${p.range}</div></div>
+    <div class="meta-box"><div class="meta-box-label">Blindsafe</div><div class="meta-box-value">${p.blindsafe ? '✓ Yes' : '✗ Not tested'}</div></div>
+    ${p.author && p.author !== 'GeoPalettes' ? `<div class="meta-box"><div class="meta-box-label">Author</div><div class="meta-box-value">${p.author}</div></div>` : ''}
+    <div class="meta-box" style="grid-column:1/-1"><div class="meta-box-label">Recommended Context</div><div class="meta-box-value">${p.context}</div></div>
+    <div class="meta-box" style="grid-column:1/-1"><div class="meta-box-label">Theme / Inspiration</div><div class="meta-box-value">${p.theme}</div></div>
+    ${p.also_useful && p.also_useful.length ? `<div class="meta-box" style="grid-column:1/-1"><div class="meta-box-label">Also useful for</div><div class="meta-box-value" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px">${p.also_useful.map(t=>`<span style="background:var(--surface);border:1px solid var(--border);padding:2px 8px;font-size:10px;border-radius:1px">${t}</span>`).join('')}</div></div>` : ''}
+    ${p.id === 'temp-fahrenheit-nws' ? `<div class="meta-box" style="grid-column:1/-1">
+      <div class="meta-box-label">Color zones (°C)</div>
+      <div class="meta-box-value" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+        <span style="background:#5C0A0A;color:#fff;padding:2px 8px;font-size:10px;border-radius:1px">&gt; 48 °C · Extreme heat</span>
+        <span style="background:#AE2A50;color:#fff;padding:2px 8px;font-size:10px;border-radius:1px">38–48 °C · Scorching</span>
+        <span style="background:#CC7818;color:#fff;padding:2px 8px;font-size:10px;border-radius:1px">29–38 °C · Orange/Gold</span>
+        <span style="background:#AAAA30;color:#111;padding:2px 8px;font-size:10px;border-radius:1px">21–29 °C · Yellows</span>
+        <span style="background:#2E7070;color:#fff;padding:2px 8px;font-size:10px;border-radius:1px">13–21 °C · Lime/Teal</span>
+        <span style="background:#3A618C;color:#fff;padding:2px 8px;font-size:10px;border-radius:1px">4–13 °C · Frigid blues</span>
+        <span style="background:#1C2D6B;color:#fff;padding:2px 8px;font-size:10px;border-radius:1px">−18–0 °C · Navy wall</span>
+        <span style="background:#A8CBEA;color:#111;padding:2px 8px;font-size:10px;border-radius:1px">−43–−18 °C · Gray/blues</span>
+        <span style="background:#F8FAFF;color:#333;border:1px solid #ccc;padding:2px 8px;font-size:10px;border-radius:1px">&lt; −43 °C · Polar white</span>
+      </div>
+    </div>` : ''}
+  `;
+
+  document.getElementById('modal-hexes').innerHTML =
+    p.colors.map(c =>
+      `<div class="hex-chip" onclick="navigator.clipboard.writeText('${c}');this.style.borderColor='#4ade80';setTimeout(()=>this.style.borderColor='',1200)">
+        <div class="hex-dot" style="background:${c};border:1px solid rgba(255,255,255,.1)"></div>
+        ${c}
+      </div>`
+    ).join('');
+
+  document.getElementById('code-r').innerHTML = buildRHtml(p);
+  document.getElementById('code-python').innerHTML = buildPyHtml(p);
+  document.getElementById('code-css').innerHTML = buildCssHtml(p);
+
+  // Reset tabs
+  document.querySelectorAll('.code-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  document.querySelectorAll('.code-block').forEach((b,i) => b.classList.toggle('active', i===0));
+  activeCodeTab = 'r';
+
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal') && e.type !== 'click') return;
+  if (e && e.currentTarget === document.getElementById('modal') && e.target !== e.currentTarget) return;
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) { this.classList.remove('open'); document.body.style.overflow = ''; }
+});
+
+function switchTab(tab, el) {
+  activeCodeTab = tab;
+  document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+  document.getElementById('code-' + tab).classList.add('active');
+}
+
+// ── CODE BUILDERS ──
+function buildR(p) {
+  const hexStr = p.colors.map(c => `"${c}"`).join(', ');
+  return `# ${p.name} — ${p.variable} (${p.type})\n# ${p.theme}\n# Range: ${p.range}\n# Context: ${p.context}\n\n${p.id.replace(/-/g,'_')} <- c(${hexStr})\n\n# Usage with ggplot2\nlibrary(ggplot2)\nscale_fill_gradientn(colours = ${p.id.replace(/-/g,'_')})\n\n# Or with colorRampPalette for continuous interpolation\npal_fn <- colorRampPalette(${p.id.replace(/-/g,'_')})\npal256 <- pal_fn(256)`;
+}
+
+function buildRHtml(p) {
+  const hexStr = p.colors.map(c => `<span class="c-str">"${c}"</span>`).join(', ');
+  const varname = p.id.replace(/-/g,'_');
+  return `<span class="c-comment"># ${p.name} — ${p.variable} (${p.type})</span>
+<span class="c-comment"># ${p.theme}</span>
+<span class="c-comment"># Range: ${p.range} | Context: ${p.context}</span>
+
+${varname} &lt;- c(${hexStr})
+
+<span class="c-comment"># Usage with ggplot2</span>
+<span class="c-fn">library</span>(ggplot2)
+<span class="c-fn">scale_fill_gradientn</span>(colours = ${varname})
+
+<span class="c-comment"># Continuous interpolation</span>
+pal_fn &lt;- <span class="c-fn">colorRampPalette</span>(${varname})
+pal256 &lt;- pal_fn(<span class="c-num">256</span>)`;
+}
+
+function buildPyHtml(p) {
+  const hexStr = p.colors.map(c => `<span class="c-str">'${c}'</span>`).join(', ');
+  const varname = p.id.replace(/-/g,'_');
+  return `<span class="c-comment"># ${p.name} — ${p.variable} (${p.type})</span>
+<span class="c-comment"># ${p.theme}</span>
+<span class="c-comment"># Range: ${p.range} | Context: ${p.context}</span>
+
+<span class="c-fn">import</span> matplotlib.pyplot <span class="c-fn">as</span> plt
+<span class="c-fn">from</span> matplotlib.colors <span class="c-fn">import</span> LinearSegmentedColormap
+
+${varname} = [${hexStr}]
+
+<span class="c-comment"># Create matplotlib colormap</span>
+cmap = LinearSegmentedColormap.<span class="c-fn">from_list</span>(
+    <span class="c-str">'${p.id}'</span>, ${varname}
+)
+
+<span class="c-comment"># Usage</span>
+plt.<span class="c-fn">imshow</span>(data, cmap=cmap)
+plt.<span class="c-fn">colorbar</span>()`;
+}
+
+function buildCssHtml(p) {
+  const stops = p.colors.map((c, i) =>
+    `    <span class="c-str">${c}</span> <span class="c-num">${Math.round(i/(p.colors.length-1)*100)}%</span>`
+  ).join(',\n');
+  return `<span class="c-comment">/* ${p.name} — ${p.variable} */</span>
+<span class="c-comment">/* ${p.theme} */</span>
+
+.<span class="c-fn">${p.id}</span> {
+  background: <span class="c-fn">linear-gradient</span>(
+    to right,
+${stops}
+  );
+}
+
+<span class="c-comment">/* CSS Custom Properties */</span>
+:root {
+${p.colors.map((c,i)=>`  --${p.id}-${i+1}: <span class="c-str">${c}</span>;`).join('\n')}
+}`;
+}
+</script>
+</body>
+</html>

@@ -25,6 +25,7 @@ let activeCodeTab = 'r';
 document.getElementById('stat-palettes').textContent = PALETTES.length;
 document.getElementById('stat-vars').textContent = variables.length;
 document.getElementById('stat-safe').textContent = PALETTES.filter(p => p.blindsafe).length;
+document.getElementById('stat-uniform').textContent = PALETTES.filter(p => p.perceptually_uniform).length;
 
 // Variable chips
 const allChip = document.createElement('button');
@@ -68,6 +69,7 @@ function applyFilters() {
     if (activeFilters.has('sequential') && p.type !== 'sequential') show = false;
     if (activeFilters.has('qualitative') && p.type !== 'qualitative') show = false;
     if (activeFilters.has('bivariate') && p.type !== 'bivariate') show = false;
+    if (activeFilters.has('perceptually_uniform') && !p.perceptually_uniform) show = false;
     if (searchQuery && !p.name.toLowerCase().includes(searchQuery) &&
         !p.variable.toLowerCase().includes(searchQuery) &&
         !p.theme.toLowerCase().includes(searchQuery) &&
@@ -103,6 +105,7 @@ PALETTES.forEach((p, i) => {
         <span class="meta-item"><span class="icon">◈</span> ${p.type}</span>
         <span class="meta-item"><span class="icon">⬡</span> ${p.colors.length} stops</span>
         <span class="${p.blindsafe ? 'badge-safe' : 'badge-unsafe'}">${p.blindsafe ? '👁 blindsafe' : '⚠ not tested'}</span>
+        ${p.perceptually_uniform ? '<span class="badge-uniform">◎ uniform</span>' : ''}
       </div>
       <div class="card-desc">${p.theme}</div>
       ${p.also_useful && p.also_useful.length ? `<div class="card-also">Also: ${p.also_useful.map(t=>`<span class="also-tag">${t}</span>`).join('')}</div>` : ''}
@@ -160,6 +163,7 @@ function openModal(id, e) {
     <div class="meta-box"><div class="meta-box-label">Type</div><div class="meta-box-value">${p.type}</div></div>
     <div class="meta-box"><div class="meta-box-label">Value Range</div><div class="meta-box-value">${p.range}</div></div>
     <div class="meta-box"><div class="meta-box-label">Blindsafe</div><div class="meta-box-value">${p.blindsafe ? '✓ Yes' : '✗ Not tested'}</div></div>
+    <div class="meta-box"><div class="meta-box-label">Perceptually uniform</div><div class="meta-box-value">${p.perceptually_uniform ? `✓ Yes <span style="color:var(--text-dim);font-size:10px">(ΔE CV=${p.uniformity_cv})</span>` : (p.type === 'bivariate' ? '— N/A' : `✗ No <span style="color:var(--text-dim);font-size:10px">(ΔE CV=${p.uniformity_cv ?? '—'})</span>`)}</div></div>
     ${p.author && p.author !== 'GeoPalettes' ? `<div class="meta-box"><div class="meta-box-label">Author</div><div class="meta-box-value">${p.author}</div></div>` : ''}
     <div class="meta-box" style="grid-column:1/-1"><div class="meta-box-label">Recommended Context</div><div class="meta-box-value">${p.context}</div></div>
     <div class="meta-box" style="grid-column:1/-1"><div class="meta-box-label">Theme / Inspiration</div><div class="meta-box-value">${p.theme}</div></div>

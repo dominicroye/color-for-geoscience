@@ -55,6 +55,19 @@
     text-transform: uppercase;
   }
 
+  .version-badge {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 1px;
+  }
+
   .header-stats {
     display: flex;
     gap: 28px;
@@ -272,6 +285,17 @@
     background: #2a1a0e;
     color: #f97316;
     border: 1px solid #4a2a1a;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .badge-uniform {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 1px;
+    background: #0e1f2a;
+    color: #60c8f0;
+    border: 1px solid #1a3a4a;
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }

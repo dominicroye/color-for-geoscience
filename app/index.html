@@ -13,6 +13,7 @@
   <div class="logo-block">
     <h1>Geo<span>Palettes</span></h1>
     <p>Color palettes for geoscientific visualization</p>
+    <div class="version-badge">v1.2.0</div>
   </div>
   <div class="header-stats">
     <div class="stat">
@@ -26,6 +27,10 @@
     <div class="stat">
       <div class="stat-num" id="stat-safe">0</div>
       <div class="stat-label">Blindsafe</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-uniform">0</div>
+      <div class="stat-label">Perceptually uniform</div>
     </div>
   </div>
 </header>
@@ -41,6 +46,7 @@
     <button class="chip" data-filter="sequential" onclick="toggleFilter(this)">→ Sequential</button>
     <button class="chip" data-filter="qualitative" onclick="toggleFilter(this)">◆ Qualitative</button>
     <button class="chip" data-filter="bivariate" onclick="toggleFilter(this)">⊞ Bivariate</button>
+    <button class="chip" data-filter="perceptually_uniform" onclick="toggleFilter(this)">◎ Perceptually uniform</button>
   </div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>

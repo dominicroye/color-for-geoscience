@@ -409,4 +409,4 @@ See individual palette entries for per-palette `license` and `source` fields.
 ## ✍️ Author & Contact
 
 Maintained by [@dominicroye](https://github.com/dominicroye) · [dominicroye.github.io](https://dominicroye.github.io)  
-Researcher at MBG-CSIC · Climatology & Geoscience Data Visualization
+Researcher at MBG-CSIC · Bioclimatology & Global Change Group | Geoscience Data Visualization

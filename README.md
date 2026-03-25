@@ -305,14 +305,25 @@ scale_fill_gradientn(
 ### Python
 
 ```python
-from matplotlib.colors import LinearSegmentedColormap
+import json
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 
-teal_cascade = ["#d1eeea","#a8dbd9","#85c4c9","#68abb8","#4f90a6","#3b738f","#2a5674"]
-cmap = LinearSegmentedColormap.from_list("teal_cascade", teal_cascade)
+def load_palette(json_path, palette_name):
+    """Loads a color palette from the JSON file by its name."""
+    with open(json_path, 'r') as f:
+        palettes = json.load(f)
+    
+    # Filter to find the palette by name
+    try:
+        data = next(p for p in palettes if p['name'] == palette_name)
+        return LinearSegmentedColormap.from_list(data['id'], data['colors'])
+    except StopIteration:
+        raise ValueError(f"Palette '{palette_name}' not found in {json_path}")
 
-plt.imshow(data, cmap=cmap, vmin=0, vmax=200)
-plt.colorbar(label="Precipitation (mm)")
+# Example Usage:
+# cmap = load_palette('palettes.json', 'ECMWF Blue–White–Red Diverging (9)')
+# plt.imshow(data, cmap=cmap)
 ```
 
 ### Google Earth Engine
